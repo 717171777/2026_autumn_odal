@@ -1,0 +1,47 @@
+name: Checks
+on:
+  push:
+  pull_request:
+permissions:
+  contents: read
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres:17-alpine
+        env:
+          POSTGRES_DB: odal
+          POSTGRES_USER: odal
+          POSTGRES_PASSWORD: odal_test_only
+        ports:
+          - 5438:5432
+        options: >-
+          --health-cmd "pg_isready -U odal -d odal"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+    env:
+      DATABASE_URL: postgresql://odal:odal_test_only@localhost:5438/odal
+      AUTH_SECRET: ci-test-secret-that-is-longer-than-thirty-two-characters
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+      - run: npm test
+      - run: npm audit --omit=dev
+      - run: npm run db:migrate
+      - run: npm run build
+      - name: Check server and database
+        run: |
+          npm start > /tmp/odal-server.log 2>&1 &
+          for attempt in $(seq 1 30); do
+            if curl -fsS http://127.0.0.1:3040/api/health; then break; fi
+            sleep 1
+          done
+          npm run test:integration

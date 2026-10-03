@@ -1,0 +1,38 @@
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_DB: odal
+      POSTGRES_USER: odal
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-odal_local_only}
+    ports:
+      - "127.0.0.1:5438:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U odal -d odal"]
+      interval: 3s
+      timeout: 3s
+      retries: 20
+  migrate:
+    build: .
+    command: ["node", "scripts/migrate.mjs"]
+    environment:
+      DATABASE_URL: postgresql://odal:${POSTGRES_PASSWORD:-odal_local_only}@db:5432/odal
+    depends_on:
+      db:
+        condition: service_healthy
+  app:
+    build: .
+    ports:
+      - "127.0.0.1:3040:3000"
+    environment:
+      DATABASE_URL: postgresql://odal:${POSTGRES_PASSWORD:-odal_local_only}@db:5432/odal
+      AUTH_SECRET: ${AUTH_SECRET:?Set AUTH_SECRET in .env}
+      PORT: 3000
+      HOSTNAME: 0.0.0.0
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+volumes:
+  postgres_data:
