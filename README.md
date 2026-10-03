@@ -22,13 +22,20 @@ Node.js 24와 Docker Desktop이 필요합니다.
 
 ```sh
 npm ci
-node scripts/setup-local.mjs
-docker compose --env-file .env.local up -d db
-npm run db:migrate
+npm run db:up
 npm run dev
 ```
 
 브라우저에서 `http://127.0.0.1:3040`을 엽니다. 데이터는 Docker 볼륨에 유지됩니다. `docker compose down`은 데이터 볼륨을 삭제하지 않습니다.
+
+`npm run db:up`은 로컬 환경 파일을 준비하고 PostgreSQL이 접속 가능한 상태가 된 뒤 테이블을 생성합니다. 이미 만들어진 환경 파일과 데이터는 유지합니다. Docker가 다시 시작되면 DB도 자동으로 시작됩니다. 직접 중지한 DB는 `npm run db:up`으로 다시 시작할 수 있습니다.
+
+```sh
+npm run db:status
+npm run db:stop
+```
+
+운영 사이트는 Neon PostgreSQL을 사용하고 이 Docker DB는 로컬 개발에 사용합니다.
 
 ## Docker로 전체 실행
 

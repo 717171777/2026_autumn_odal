@@ -11,6 +11,9 @@
     "start": "next start --hostname 0.0.0.0 --port 3040",
     "lint": "eslint .",
     "typecheck": "tsc --noEmit",
+    "db:up": "node scripts/setup-local.mjs && docker compose --env-file .env.local up -d --wait db && npm run db:migrate",
+    "db:stop": "docker compose --env-file .env.local stop db",
+    "db:status": "docker compose --env-file .env.local ps db",
     "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
     "test": "tsx --test tests/*.test.ts",
     "test:integration": "node --env-file-if-exists=.env.local scripts/integration-test.mjs"
