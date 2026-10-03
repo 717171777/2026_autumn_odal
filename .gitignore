@@ -1,0 +1,16 @@
+node_modules/
+.next/
+out/
+.env*
+!.env.example
+.vercel/
+.DS_Store
+*.tsbuildinfo
+coverage/
+test-results/
+docs/references/
+.local/
+AGENTS.md
+CLAUDE.md
+.local-audit.json
+.vercel

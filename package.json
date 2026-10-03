@@ -1,0 +1,46 @@
+{
+  "name": "odal-todo",
+  "version": "1.0.0",
+  "private": true,
+  "engines": {
+    "node": ">=24 <25"
+  },
+  "scripts": {
+    "dev": "next dev --hostname 127.0.0.1 --port 3040",
+    "build": "next build",
+    "start": "next start --hostname 0.0.0.0 --port 3040",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "db:up": "node scripts/setup-local.mjs && docker compose --env-file .env.local up -d --wait db && npm run db:migrate",
+    "db:stop": "docker compose --env-file .env.local stop db",
+    "db:status": "docker compose --env-file .env.local ps db",
+    "db:migrate": "node --env-file-if-exists=.env.local scripts/migrate.mjs",
+    "test": "tsx --test tests/*.test.ts",
+    "test:integration": "node --env-file-if-exists=.env.local scripts/integration-test.mjs"
+  },
+  "dependencies": {
+    "@fontsource-variable/inter": "^5.2.0",
+    "@fontsource/noto-sans-kr": "^5.2.0",
+    "@radix-ui/react-dialog": "1.1.23",
+    "@radix-ui/react-dropdown-menu": "^2.1.16",
+    "lucide-react": "^0.468.0",
+    "next": "16.3.8",
+    "pg": "8.23.1",
+    "react": "19.3.0",
+    "react-dom": "19.3.0",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^24.0.0",
+    "@types/pg": "^8.15.0",
+    "@types/react": "^19.0.0",
+    "@types/react-dom": "^19.0.0",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0",
+    "typescript-eslint": "^8.71.0"
+  }
+}
