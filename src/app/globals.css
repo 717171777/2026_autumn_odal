@@ -1613,3 +1613,12 @@ kbd {
     font-size: 12px;
   }
 }
+
+@media (max-width: 760px) {
+  .sidebar {
+    visibility: hidden;
+  }
+  .sidebar.open {
+    visibility: visible;
+  }
+}
